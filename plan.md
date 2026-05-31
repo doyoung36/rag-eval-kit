@@ -18,14 +18,14 @@ RAGAS로 RAG 파이프라인 품질 측정 + pgvector / Qdrant / Weaviate 벡터
 
 ## Phase 1 — 환경 세팅
 
-- [ ] `docker-compose.yml` 작성 (pgvector, Qdrant, Neo4j 컨테이너)
-- [ ] Python 의존성 정의 (`pyproject.toml`)
+- [x] `docker-compose.yml` 작성 (pgvector, Qdrant, Neo4j 컨테이너)
+- [x] Python 의존성 정의 (`pyproject.toml`)
   - `ragas`, `langchain`, `langchain-community`, `langchain-anthropic`
   - `psycopg2-binary`, `pgvector`, `qdrant-client`, `neo4j`
   - `sentence-transformers`, `datasets`
-- [ ] `.env.example` 작성 (ANTHROPIC_API_KEY, DB 접속 정보)
-- [ ] Ollama 설치 확인 및 `gemma4-e2b` 모델 pull
-- [ ] `README.md` 뼈대 작성 (프로젝트 목적, 실행 방법 placeholder)
+- [x] `.env.example` 작성 (ANTHROPIC_API_KEY, DB 접속 정보)
+- [x] Ollama 설치 확인 및 `gemma4-e2b` 모델 pull
+- [x] `README.md` 뼈대 작성 (프로젝트 목적, 실행 방법 placeholder)
 
 ---
 
