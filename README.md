@@ -75,8 +75,8 @@ rag-eval-kit/
 > 상세 계획은 [plan.md](plan.md) 참고.
 
 - [x] **Phase 1** — 환경 세팅 (docker-compose, 의존성, Ollama)
-- [ ] **Phase 2** — 데이터셋 준비 및 골든셋 추출
-- [ ] **Phase 3** — RAG 파이프라인 기본 구성
+- [x] **Phase 2** — 데이터셋 준비 및 골든셋 추출
+- [x] **Phase 3** — RAG 파이프라인 기본 구성
 - [ ] **Phase 4** — RAGAS 평가
 - [ ] **Phase 5** — 벡터DB / 임베딩 벤치마크
 - [ ] **Phase 6** — 코드 정리 & 마무리

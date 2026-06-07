@@ -12,6 +12,10 @@ dependencies = [
     "langchain-community",
     "langchain-anthropic",
     "langchain-ollama",
+    # LangChain 1.x 표준 통합 패키지 (community sunset 대응)
+    "langchain-text-splitters>=1.1.2",
+    "langchain-huggingface>=1.2.2",
+    "langchain-postgres>=0.0.17",
     # 벡터DB 클라이언트
     "psycopg2-binary",
     "pgvector",
