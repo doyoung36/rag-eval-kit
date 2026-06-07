@@ -27,6 +27,11 @@ pip-log.txt
 data/docs/
 results/
 
+# 포트폴리오 / 프로세스 관리 (비공개)
+curriculum.md
+plan.md
+research.md
+
 # IDE / OS
 .vscode/
 .idea/
