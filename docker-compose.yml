@@ -42,6 +42,39 @@ services:
       timeout: 5s
       retries: 5
 
+  # 주피터 서버 (opt-in) — 기본 `up`에는 안 뜨고, `--profile notebook`일 때만 실행.
+  #   docker compose --profile notebook up -d   →  http://localhost:8888
+  # DB는 서비스명으로, Ollama는 호스트(host.docker.internal)로 접속한다.
+  notebook:
+    profiles: ["notebook"]
+    build: .
+    container_name: rag-notebook
+    environment:
+      PGVECTOR_HOST: pgvector
+      PGVECTOR_USER: ${PGVECTOR_USER:-rag}
+      PGVECTOR_PASSWORD: ${PGVECTOR_PASSWORD:-rag}
+      PGVECTOR_DB: ${PGVECTOR_DB:-ragdb}
+      QDRANT_HOST: qdrant
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: ${NEO4J_USER:-neo4j}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-ragpassword}
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      HF_TOKEN: ${HF_TOKEN:-}
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./:/app          # 라이브 코드/노트북 마운트 (결과물은 호스트에 영속)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      pgvector:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      neo4j:
+        condition: service_healthy
+
 volumes:
   pgvector_data:
   qdrant_data:
