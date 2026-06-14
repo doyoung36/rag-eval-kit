@@ -23,10 +23,13 @@ def build_embeddings(
     model_name: str = config.EMBED_MODEL,
     device: str | None = None,
     batch_size: int = config.EMBED_BATCH_SIZE,
+    show_progress: bool = False,
 ):
     """코사인 유사도 검색을 위해 정규화(`normalize_embeddings=True`)된 임베딩 모델을 로드.
 
     `device=None`이면 자동 선택. 인덱싱과 검색에 **반드시 동일한 모델**을 써야 한다.
+    `show_progress=True`면 인코딩 진행바를 띄운다(대량 코퍼스 임베딩 모니터링용).
+    질의처럼 소량 인코딩엔 노이즈가 되므로, 호출부에서 `emb.show_progress`를 토글할 수 있다.
     """
     from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -36,4 +39,5 @@ def build_embeddings(
         model_name=model_name,
         model_kwargs={"device": device},
         encode_kwargs={"normalize_embeddings": True, "batch_size": batch_size},
+        show_progress=show_progress,
     )

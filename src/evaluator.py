@@ -155,6 +155,52 @@ def run_ragas(eval_dataset, evaluator_llm, evaluator_emb, max_workers: int = 4):
     )
 
 
+def build_retrieval_records(golden_set: list[dict], results: list[list]) -> list[dict]:
+    """Phase 5용 — 검색 결과(Hit 리스트)와 골든셋으로 RAGAS 입력 레코드를 만든다.
+
+    검색 전용 지표(context_precision/recall)는 `response`(생성 답변)가 필요 없으므로
+    LLM 생성 단계 없이 검색된 청크만으로 구성한다. `results[i]`는 i번째 질의의 Hit 리스트.
+    """
+    return [
+        {
+            "user_input": g["question"],
+            "retrieved_contexts": [h.text for h in hits],
+            "reference": g["ground_truth"],
+        }
+        for g, hits in zip(golden_set, results)
+    ]
+
+
+def run_ragas_retrieval(records: list[dict], evaluator_llm, evaluator_emb, max_workers: int = 4):
+    """검색 전용 RAGAS — context_precision / context_recall만 측정 (Phase 5).
+
+    생성 지표(faithfulness/answer_relevancy)는 Phase 5에서 제외한다 — DB·임베딩만
+    바뀌고 생성 LLM은 고정이라 비교 변별력이 없고 judge 비용만 든다.
+    """
+    from ragas import EvaluationDataset, evaluate
+    from ragas.dataset_schema import SingleTurnSample
+    from ragas.metrics import context_precision, context_recall
+    from ragas.run_config import RunConfig
+
+    samples = [
+        SingleTurnSample(
+            user_input=r["user_input"],
+            retrieved_contexts=r["retrieved_contexts"],
+            reference=r["reference"],
+        )
+        for r in records
+    ]
+    run_config = RunConfig(timeout=180, max_retries=5, max_workers=max_workers)
+    return evaluate(
+        dataset=EvaluationDataset(samples=samples),
+        metrics=[context_precision, context_recall],
+        llm=evaluator_llm,
+        embeddings=evaluator_emb,
+        run_config=run_config,
+        show_progress=True,
+    )
+
+
 _METRIC_COLS = ("faithfulness", "answer_relevancy", "context_precision", "context_recall")
 
 
