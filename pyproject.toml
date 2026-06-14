@@ -46,6 +46,8 @@ packages = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# 노트북은 단위 디버깅용 스크래치 — 라이브러리 코드(src/scripts)만 lint 대상으로 둔다.
+extend-exclude = ["notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

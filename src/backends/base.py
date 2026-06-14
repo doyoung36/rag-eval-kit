@@ -49,7 +49,7 @@ class VectorBackend(ABC):
     ) -> int:
         """벡터·본문·제목을 적재한다. 적재한 건수를 반환."""
 
-    def finalize(self) -> None:
+    def finalize(self) -> None:  # noqa: B027  선택적 훅 — 기본 no-op, DB별로만 override
         """적재 후 ANN 인덱스를 질의 가능 상태로 만든다 (기본: 별도 작업 없음).
 
         DB마다 인덱스 구축 시점이 달라(아래 참고) 인덱싱 시간 측정엔
@@ -67,5 +67,5 @@ class VectorBackend(ABC):
     def count(self) -> int:
         """적재된 벡터 수."""
 
-    def close(self) -> None:
+    def close(self) -> None:  # noqa: B027  선택적 훅 — 기본 no-op, DB별로만 override
         """커넥션 정리 (기본: 별도 작업 없음)."""

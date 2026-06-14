@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: ruff lint + syntax smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      # 1) 정적 린트 (E/F/I/UP/B) — 노트북은 pyproject에서 제외됨
+      - name: Ruff lint
+        run: uvx ruff check .
+
+      # 2) 구문 스모크 — src/scripts 전체를 바이트컴파일해 import 경로/문법 오류를 잡는다.
+      #    노트북 실제 실행(end-to-end)은 pgvector/Qdrant/Neo4j + Ollama + 임베딩 모델이
+      #    모두 살아있어야 해서 CI 범위 밖이다(로컬 `docker compose up`으로 수행).
+      - name: Syntax smoke (compileall)
+        run: uv run --no-project python -m compileall -q src scripts

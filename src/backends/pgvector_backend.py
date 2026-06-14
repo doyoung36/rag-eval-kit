@@ -63,6 +63,7 @@ class PgVectorBackend(VectorBackend):
                         vectors[start : start + batch_size],
                         texts[start : start + batch_size],
                         titles[start : start + batch_size],
+                        strict=True,
                     )
                 ]
                 cur.executemany(sql, rows)

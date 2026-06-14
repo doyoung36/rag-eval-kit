@@ -50,7 +50,7 @@ def evaluate_retrieval(
 
     ranks = [
         _first_relevant_rank(hits, g["ground_truth"], k)
-        for hits, g in zip(results, golden)
+        for hits, g in zip(results, golden, strict=True)
     ]
     n = len(ranks)
     hit_rate = sum(r is not None for r in ranks) / n if n else 0.0

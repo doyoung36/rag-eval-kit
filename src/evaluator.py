@@ -167,7 +167,7 @@ def build_retrieval_records(golden_set: list[dict], results: list[list]) -> list
             "retrieved_contexts": [h.text for h in hits],
             "reference": g["ground_truth"],
         }
-        for g, hits in zip(golden_set, results)
+        for g, hits in zip(golden_set, results, strict=True)
     ]
 
 
