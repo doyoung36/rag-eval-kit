@@ -33,10 +33,27 @@ docker compose ps        # 모두 healthy 확인
 uv sync                  # 또는: pip install -e ".[dev]"
 
 # 4. Ollama 모델 준비 (로컬 추론 LLM)
-ollama pull gemma4-e2b
+ollama pull gemma4:e2b
 
-# 5. 노트북 실행
+# 5. 단위 디버깅은 노트북에서
 jupyter lab
+```
+
+### 무거운 작업은 스크립트로
+
+주요 로직은 `src/` 모듈로 분리되어 있어 노트북에서 `from src.xxx import ...`로 단위 확인하고,
+1,000건이 넘는 임베딩 적재 같은 대량 작업은 스크립트로 실행한다 (tqdm 진행도 표시).
+
+```bash
+# 전체 코퍼스(1,417개) 청킹·임베딩·pgvector 적재 — 진짜 baseline용
+python scripts/index_corpus.py
+python scripts/index_corpus.py --max-docs 200   # 빠른 동작 확인용
+
+# 골든셋 RAG 추론 수집 → results/eval_inputs.json
+python scripts/collect_eval_inputs.py
+
+# RAGAS 4개 지표 평가 (수집 + 평가 한 번에: --collect)
+python scripts/run_ragas_eval.py --collect
 ```
 
 ### 접속 정보
@@ -54,16 +71,23 @@ rag-eval-kit/
 ├── data/
 │   ├── docs/               # title별 텍스트 파일 (squad_kor_v1 가공)
 │   └── golden_set.json     # QA 골든셋 50개
-├── notebooks/
+├── notebooks/              # 단위 디버깅 — src 함수를 단계별로 호출
 │   ├── 00_dataset_prep.ipynb   # 데이터 가공 및 골든셋 추출
-│   ├── 01_pipeline.ipynb       # RAG 파이프라인 구성
+│   ├── 01_pipeline.ipynb       # RAG 파이프라인 구성 (소량 확인)
 │   ├── 02_ragas_eval.ipynb     # RAGAS 평가
-│   └── 03_vectordb_bench.ipynb # 벡터DB 비교
-├── src/
-│   ├── chunker.py
-│   ├── embedder.py
-│   ├── retriever.py
-│   └── evaluator.py
+│   └── 03_vectordb_bench.ipynb # 벡터DB 비교 (예정)
+├── src/                    # 재사용 모듈 (editable 설치 → from src.x import)
+│   ├── config.py               # 경로·하이퍼파라미터·접속정보 (cwd 독립)
+│   ├── dataset.py              # KorQuAD 로드 → dedup → docs / 골든셋
+│   ├── chunker.py              # 문서 로드 & 청킹
+│   ├── embedder.py             # 임베딩 모델 (device 자동)
+│   ├── retriever.py            # pgvector 엔진/적재/리트리버
+│   ├── rag.py                  # LCEL RAG 체인
+│   └── evaluator.py            # RAGAS 셰임/judge/수집/평가
+├── scripts/                # 대량/무거운 작업 CLI (tqdm 진행도)
+│   ├── index_corpus.py         # 전체 코퍼스 임베딩·적재
+│   ├── collect_eval_inputs.py  # 골든셋 RAG 추론 수집
+│   └── run_ragas_eval.py       # RAGAS 평가 실행
 ├── results/
 ├── docker-compose.yml
 ├── pyproject.toml

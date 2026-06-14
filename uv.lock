@@ -3664,6 +3664,7 @@ dependencies = [
     { name = "qdrant-client" },
     { name = "ragas" },
     { name = "sentence-transformers" },
+    { name = "tqdm" },
 ]
 
 [package.optional-dependencies]
@@ -3693,6 +3694,7 @@ requires-dist = [
     { name = "ragas" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "sentence-transformers" },
+    { name = "tqdm" },
 ]
 provides-extras = ["dev"]
 

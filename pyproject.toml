@@ -26,6 +26,7 @@ dependencies = [
     "datasets",
     # 유틸
     "python-dotenv",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
